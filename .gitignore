@@ -1,0 +1,8 @@
+/.idea
+/.gradle
+/webpack.generated.js
+/webpack.config.js
+/target
+/package.json
+/node_modules
+/build
