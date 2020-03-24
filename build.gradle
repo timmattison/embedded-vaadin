@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'java-library'
     id 'application'
     id 'idea'
 
@@ -47,15 +48,15 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // Dependency injection with Dagger
-    compile "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
 
-    compile "org.slf4j:slf4j-log4j12:$slf4jVersion"
-    compile "com.jcabi:jcabi-log:$jcabiVersion"
+    implementation "org.slf4j:slf4j-log4j12:$slf4jVersion"
+    implementation "com.jcabi:jcabi-log:$jcabiVersion"
 
-    compileOnly "org.eclipse.jetty:jetty-continuation:$jettyVersion"
-    compileOnly "org.eclipse.jetty:jetty-server:$jettyVersion"
-    compileOnly "org.eclipse.jetty.websocket:websocket-server:$jettyVersion"
-    compileOnly "org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion"
+    api "org.eclipse.jetty:jetty-continuation:$jettyVersion"
+    api "org.eclipse.jetty:jetty-server:$jettyVersion"
+    api "org.eclipse.jetty.websocket:websocket-server:$jettyVersion"
+    api "org.eclipse.jetty.websocket:javax-websocket-server-impl:$jettyVersion"
 
     implementation enforcedPlatform("com.vaadin:vaadin-bom:$vaadinVersion")
 
@@ -68,7 +69,7 @@ dependencies {
                 .forEach { group -> exclude(group: group) }
     }
 
-    compileOnly "com.vaadin:flow-server-production-mode:$vaadinVersion"
+    api "com.vaadin:flow-server-production-mode:$vaadinVersion"
 
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
+    api "javax.servlet:javax.servlet-api:4.0.1"
 }
