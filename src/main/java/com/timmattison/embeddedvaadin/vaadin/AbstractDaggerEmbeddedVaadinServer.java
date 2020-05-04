@@ -3,6 +3,7 @@ package com.timmattison.embeddedvaadin.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.server.startup.ServletContextListeners;
 import org.eclipse.jetty.server.Server;
@@ -73,7 +74,8 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
 
             server.setHandler(context);
 
-            ApplicationRouteRegistry applicationRouteRegistry = ApplicationRouteRegistry.getInstance(context.getServletContext());
+            VaadinServletContext vaadinServletContext = new VaadinServletContext(context.getServletContext());
+            ApplicationRouteRegistry applicationRouteRegistry = ApplicationRouteRegistry.getInstance(vaadinServletContext);
             vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
 
             server.start();
