@@ -2,6 +2,7 @@ package com.timmattison.embeddedvaadin.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
@@ -75,7 +76,7 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
 
             server.setHandler(context);
 
-            ApplicationRouteRegistry applicationRouteRegistry = ApplicationRouteRegistry.getInstance(context.getServletContext());
+            ApplicationRouteRegistry applicationRouteRegistry = ((ApplicationRouteRegistry) RouteConfiguration.forApplicationScope().getHandledRegistry());
             vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
             logRoutes(applicationRouteRegistry);
 
