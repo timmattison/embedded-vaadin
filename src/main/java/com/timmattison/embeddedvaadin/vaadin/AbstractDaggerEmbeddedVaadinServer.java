@@ -78,12 +78,18 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             VaadinServletContext vaadinServletContext = new VaadinServletContext(context.getServletContext());
             ApplicationRouteRegistry applicationRouteRegistry = ApplicationRouteRegistry.getInstance(vaadinServletContext);
             vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
+            logRoutes(applicationRouteRegistry);
 
             server.start();
             server.join();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    protected void logRoutes(ApplicationRouteRegistry applicationRouteRegistry) {
+        applicationRouteRegistry.getRegisteredRoutes().stream()
+                .forEach(routeData -> log.info("Route: " + routeData.getUrl() + " -> " + routeData.getNavigationTarget().getName()));
     }
 
     private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
@@ -104,15 +110,18 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
         Route route = clazz.getAnnotation(Route.class);
 
         if (route == null) {
+            log.info("Route for [" + clazz.getName() + "] is null. It is not being added to the application route registry.");
             return Optional.empty();
         }
 
         String routeValue = route.value();
 
         if (routeValue.equals(Route.NAMING_CONVENTION)) {
+            log.info("Route for [" + clazz.getName() + "] is blank. It is being added to the application route registry with the value ['']");
             return Optional.of("");
         }
 
+        log.info("Route for [" + clazz.getName() + "] is [" + routeValue + "]");
         return Optional.of(routeValue);
     }
 }
