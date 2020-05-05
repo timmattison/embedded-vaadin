@@ -42,6 +42,7 @@ def jcabiVersion = '0.18.1'
 def jettyVersion = '9.4.27.v20200227'
 def daggerVersion = '2.26'
 def vaadinVersion = '15.0.5'
+def flowServerProductionModeVersion = '3.0.6'
 
 dependencies {
     // Dagger code generation
@@ -69,7 +70,7 @@ dependencies {
                 .forEach { group -> exclude(group: group) }
     }
 
-    api "com.vaadin:flow-server-production-mode:$vaadinVersion"
+    api "com.vaadin:flow-server-production-mode:$flowServerProductionModeVersion"
 
     api "javax.servlet:javax.servlet-api:4.0.1"
 }
