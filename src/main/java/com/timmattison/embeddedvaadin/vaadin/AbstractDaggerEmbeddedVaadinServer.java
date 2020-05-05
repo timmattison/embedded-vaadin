@@ -5,8 +5,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.server.startup.ServletContextListeners;
+import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.webapp.Configuration;
+import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
 import org.slf4j.Logger;
@@ -64,6 +67,8 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.setBaseResource(findWebRoot());
             context.setContextPath("/");
             context.addServlet(VaadinServlet.class, "/*");
+            context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*\\.jar|.*/classes/.*");
+            context.setConfigurationDiscovered(true);
             context.getServletContext().setExtendedListenerTypes(true);
             // Required or no routes are registered
             context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
@@ -74,10 +79,8 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
 
             server.setHandler(context);
 
-            ApplicationRouteRegistry applicationRouteRegistry = ApplicationRouteRegistry.getInstance(context.getServletContext());
-            vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
-            logRoutes(applicationRouteRegistry);
-
+            final Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
+            classlist.addBefore(JettyWebXmlConfiguration.class.getName(), AnnotationConfiguration.class.getName());
             server.start();
             server.join();
         } catch (Exception e) {
