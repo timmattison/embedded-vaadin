@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class AbstractDaggerEmbeddedVaadinServer {
@@ -86,7 +87,7 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
     }
 
     private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
-        applicationRouteRegistry.setRoute(getRoute(componentClass), componentClass, new ArrayList<>());
+        getRoute(componentClass).ifPresent(route -> applicationRouteRegistry.setRoute(route, componentClass, new ArrayList<>()));
     }
 
     private void tryToSetProductionMode() {
@@ -99,19 +100,19 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
         }
     }
 
-    public String getRoute(Class<? extends Component> clazz) {
+    public Optional<String> getRoute(Class<? extends Component> clazz) {
         Route route = clazz.getAnnotation(Route.class);
 
         if (route == null) {
-            return "";
+            return Optional.empty();
         }
 
         String routeValue = route.value();
 
         if (routeValue.equals(Route.NAMING_CONVENTION)) {
-            return "";
+            return Optional.of("");
         }
 
-        return routeValue;
+        return Optional.of(routeValue);
     }
 }
