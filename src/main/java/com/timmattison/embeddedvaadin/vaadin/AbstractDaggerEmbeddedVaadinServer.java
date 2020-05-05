@@ -4,6 +4,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.ServiceInitEvent;
+import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.server.startup.ServletContextListeners;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractDaggerEmbeddedVaadinServer {
+public abstract class AbstractDaggerEmbeddedVaadinServer implements VaadinServiceInitListener {
     private final Logger log = LoggerFactory.getLogger(AbstractDaggerEmbeddedVaadinServer.class);
 
     @Inject
@@ -70,21 +72,25 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             // Required or no routes are registered
             context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
             context.addEventListener(new ServletContextListeners());
+            context.addEventListener(this);
             WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
             Server server = new Server(8001);
 
             server.setHandler(context);
 
-            ApplicationRouteRegistry applicationRouteRegistry = ((ApplicationRouteRegistry) RouteConfiguration.forApplicationScope().getHandledRegistry());
-            vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
-            logRoutes(applicationRouteRegistry);
-
             server.start();
             server.join();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    @Override
+    public void serviceInit(ServiceInitEvent event) {
+        ApplicationRouteRegistry applicationRouteRegistry = ((ApplicationRouteRegistry) RouteConfiguration.forApplicationScope().getHandledRegistry());
+        vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
+        logRoutes(applicationRouteRegistry);
     }
 
     protected void logRoutes(ApplicationRouteRegistry applicationRouteRegistry) {
