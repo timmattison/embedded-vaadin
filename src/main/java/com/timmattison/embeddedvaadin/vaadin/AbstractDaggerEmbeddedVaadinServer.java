@@ -2,6 +2,7 @@ package com.timmattison.embeddedvaadin.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.server.startup.ServletContextListeners;
@@ -86,12 +87,16 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
     }
 
     protected void logRoutes(ApplicationRouteRegistry applicationRouteRegistry) {
-        applicationRouteRegistry.getRegisteredRoutes().stream()
+        applicationRouteRegistry.getRegisteredRoutes()
                 .forEach(routeData -> log.info("Route: " + routeData.getUrl() + " -> " + routeData.getNavigationTarget().getName()));
     }
 
     private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
         getRoute(componentClass).ifPresent(route -> applicationRouteRegistry.setRoute(route, componentClass, new ArrayList<>()));
+
+        if (componentClass.getClass().getAnnotation(PWA.class) != null) {
+            applicationRouteRegistry.setPwaConfigurationClass(componentClass);
+        }
     }
 
     private void tryToSetProductionMode() {
