@@ -92,11 +92,14 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
     }
 
     private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
+        log.info("Attempting to auto-wire [" + componentClass.getName() + "]");
         getRoute(componentClass).ifPresent(route -> applicationRouteRegistry.setRoute(route, componentClass, new ArrayList<>()));
 
         if (componentClass.getAnnotation(PWA.class) != null) {
             log.info("Wiring up [" + componentClass.getName() + "] as the PWA configuration class");
             applicationRouteRegistry.setPwaConfigurationClass(componentClass);
+        } else {
+            log.info("[" + componentClass.getName() + "] was not a PWA configuration class");
         }
     }
 
