@@ -41,7 +41,7 @@ def jcabiVersion = '0.18.1'
 
 def jettyVersion = '9.4.27.v20200227'
 def daggerVersion = '2.26'
-def vaadinVersion = '14.1.17'
+def vaadinVersion = '14.1.26'
 def flowServerProductionModeVersion = '3.0.6'
 
 dependencies {
