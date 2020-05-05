@@ -73,7 +73,6 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.getServletContext().setExtendedListenerTypes(true);
             // Required or no routes are registered
             context.addEventListener(new ServletContextListeners());
-            WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
             URL classes = getClass()
                     .getProtectionDomain()
@@ -85,6 +84,8 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.getMetaData()
                     .setWebInfClassesDirs(
                             Arrays.asList(Resource.newResource(classes)));
+
+            WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
             Server server = new Server(8001);
 
