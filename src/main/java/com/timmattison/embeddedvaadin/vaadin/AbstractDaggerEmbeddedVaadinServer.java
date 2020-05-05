@@ -69,6 +69,7 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.addServlet(VaadinServlet.class, "/*");
             context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
             context.setConfigurationDiscovered(true);
+            context.setExtraClasspath("/lambda/.*");
             context.getServletContext().setExtendedListenerTypes(true);
             // Required or no routes are registered
             context.addEventListener(new ServletContextListeners());
