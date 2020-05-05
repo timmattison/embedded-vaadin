@@ -67,11 +67,10 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.setBaseResource(findWebRoot());
             context.setContextPath("/");
             context.addServlet(VaadinServlet.class, "/*");
-            context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*\\.jar|.*/classes/.*");
+            context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
             context.setConfigurationDiscovered(true);
             context.getServletContext().setExtendedListenerTypes(true);
             // Required or no routes are registered
-            context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
             context.addEventListener(new ServletContextListeners());
             WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
