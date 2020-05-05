@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -73,6 +74,17 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             // Required or no routes are registered
             context.addEventListener(new ServletContextListeners());
             WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
+
+            URL classes = getClass()
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation();
+
+            log.info("Classes URL: " + classes.toString());
+
+            context.getMetaData()
+                    .setWebInfClassesDirs(
+                            Arrays.asList(Resource.newResource(classes)));
 
             Server server = new Server(8001);
 
