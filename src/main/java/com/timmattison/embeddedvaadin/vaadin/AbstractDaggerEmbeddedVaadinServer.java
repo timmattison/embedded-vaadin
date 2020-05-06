@@ -1,13 +1,7 @@
 package com.timmattison.embeddedvaadin.vaadin;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.server.ServiceInitEvent;
-import com.vaadin.flow.server.VaadinServiceInitListener;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import com.vaadin.flow.server.startup.ServletContextListeners;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
@@ -19,17 +13,17 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractDaggerEmbeddedVaadinServer implements VaadinServiceInitListener {
+public abstract class AbstractDaggerEmbeddedVaadinServer {
     private final Logger log = LoggerFactory.getLogger(AbstractDaggerEmbeddedVaadinServer.class);
 
     @Inject
     Set<Class<? extends Component>> vaadinComponents;
 
     public void start() {
+        DaggerVaadinServiceInitListener.vaadinComponents = vaadinComponents;
+
         Thread serverThread = new Thread(this::innerStart);
 
         serverThread.start();
@@ -72,7 +66,6 @@ public abstract class AbstractDaggerEmbeddedVaadinServer implements VaadinServic
             // Required or no routes are registered
             context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*");
             context.addEventListener(new ServletContextListeners());
-            context.addEventListener(this);
             WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
             Server server = new Server(8001);
@@ -86,30 +79,6 @@ public abstract class AbstractDaggerEmbeddedVaadinServer implements VaadinServic
         }
     }
 
-    @Override
-    public void serviceInit(ServiceInitEvent event) {
-        ApplicationRouteRegistry applicationRouteRegistry = ((ApplicationRouteRegistry) RouteConfiguration.forApplicationScope().getHandledRegistry());
-        vaadinComponents.forEach(componentClass -> autoWire(applicationRouteRegistry, componentClass));
-        logRoutes(applicationRouteRegistry);
-    }
-
-    protected void logRoutes(ApplicationRouteRegistry applicationRouteRegistry) {
-        applicationRouteRegistry.getRegisteredRoutes()
-                .forEach(routeData -> log.info("Route: " + routeData.getUrl() + " -> " + routeData.getNavigationTarget().getName()));
-    }
-
-    private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
-        log.info("Attempting to auto-wire [" + componentClass.getName() + "]");
-        getRoute(componentClass).ifPresent(route -> applicationRouteRegistry.setRoute(route, componentClass, new ArrayList<>()));
-
-        if (componentClass.getAnnotation(PWA.class) != null) {
-            log.info("Wiring up [" + componentClass.getName() + "] as the PWA configuration class");
-            applicationRouteRegistry.setPwaConfigurationClass(componentClass);
-        } else {
-            log.info("[" + componentClass.getName() + "] was not a PWA configuration class");
-        }
-    }
-
     private void tryToSetProductionMode() {
         if (isProductionMode()) {
             // fixes https://github.com/mvysny/vaadin14-embedded-jetty/issues/1
@@ -118,24 +87,5 @@ public abstract class AbstractDaggerEmbeddedVaadinServer implements VaadinServic
         } else {
             log.warn("NOT production mode");
         }
-    }
-
-    public Optional<String> getRoute(Class<? extends Component> clazz) {
-        Route route = clazz.getAnnotation(Route.class);
-
-        if (route == null) {
-            log.info("Route for [" + clazz.getName() + "] is null. It is not being added to the application route registry.");
-            return Optional.empty();
-        }
-
-        String routeValue = route.value();
-
-        if (routeValue.equals(Route.NAMING_CONVENTION)) {
-            log.info("Route for [" + clazz.getName() + "] is blank. It is being added to the application route registry with the value ['']");
-            return Optional.of("");
-        }
-
-        log.info("Route for [" + clazz.getName() + "] is [" + routeValue + "]");
-        return Optional.of(routeValue);
     }
 }
