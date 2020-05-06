@@ -10,7 +10,6 @@ import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
@@ -32,7 +31,7 @@ public class DaggerVaadinServiceInitListener implements VaadinServiceInitListene
 
     protected void logRoutes(ApplicationRouteRegistry applicationRouteRegistry) {
         applicationRouteRegistry.getRegisteredRoutes()
-                .forEach(routeData -> log.info("Route: " + routeData.getUrl() + " -> " + routeData.getNavigationTarget().getName()));
+                .forEach(routeData -> log.info("Route: [" + routeData.getUrl() + "] -> [" + routeData.getNavigationTarget().getName() + "]"));
     }
 
     private void autoWire(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass) {
