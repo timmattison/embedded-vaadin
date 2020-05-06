@@ -10,7 +10,7 @@ import com.vaadin.flow.server.startup.ApplicationRouteRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,12 +46,12 @@ public class DaggerVaadinServiceInitListener implements VaadinServiceInitListene
         }
     }
 
-    private void setRoute(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass, String route) {
+    private void setRoute(ApplicationRouteRegistry applicationRouteRegistry, Class<? extends Component> componentClass, Route route) {
         log.info("Setting route [" + route + "] for [" + componentClass.getName() + "]");
-        applicationRouteRegistry.setRoute(route, componentClass, new ArrayList<>());
+        applicationRouteRegistry.setRoute(route.value(), componentClass, Collections.singletonList(route.layout()));
     }
 
-    public Optional<String> getRoute(Class<? extends Component> clazz) {
+    public Optional<Route> getRoute(Class<? extends Component> clazz) {
         Route route = clazz.getAnnotation(Route.class);
 
         if (route == null) {
@@ -61,12 +61,7 @@ public class DaggerVaadinServiceInitListener implements VaadinServiceInitListene
 
         String routeValue = route.value();
 
-        if (routeValue.equals(Route.NAMING_CONVENTION)) {
-            log.info("Route for [" + clazz.getName() + "] is blank. It is being added to the application route registry with the value ['']");
-            return Optional.of("");
-        }
-
         log.info("Route for [" + clazz.getName() + "] is [" + routeValue + "]");
-        return Optional.of(routeValue);
+        return Optional.of(route);
     }
 }
