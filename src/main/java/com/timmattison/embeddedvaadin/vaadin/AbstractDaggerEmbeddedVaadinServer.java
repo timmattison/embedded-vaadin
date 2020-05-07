@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class AbstractDaggerEmbeddedVaadinServer {
@@ -68,7 +69,7 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
             context.addEventListener(new ServletContextListeners());
             WebSocketServerContainerInitializer.initialize(context); // fixes IllegalStateException: Unable to configure jsr356 at that stage. ServerContainer is null
 
-            Server server = new Server(8001);
+            Server server = new Server(getPort());
 
             server.setHandler(context);
 
@@ -77,6 +78,12 @@ public abstract class AbstractDaggerEmbeddedVaadinServer {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    private int getPort() {
+        return Optional.ofNullable(System.getenv("PORT"))
+                .map(Integer::parseInt)
+                .orElse(8001);
     }
 
     private void tryToSetProductionMode() {
