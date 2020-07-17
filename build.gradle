@@ -5,7 +5,7 @@ plugins {
     id 'idea'
 
     // Adds dependencyUpdates task
-    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'com.github.ben-manes.versions' version '0.29.0'
 }
 
 // Only necessary for debugging JARs locally
