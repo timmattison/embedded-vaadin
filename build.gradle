@@ -39,7 +39,7 @@ repositories {
 def slf4jVersion = '1.7.30'
 def jcabiVersion = '0.18.1'
 
-def jettyVersion = '9.4.27.v20200227'
+def jettyVersion = '9.4.40.v20210413'
 def daggerVersion = '2.26'
 def vaadinVersion = '15.0.5'
 def flowServerProductionModeVersion = '3.0.6'
