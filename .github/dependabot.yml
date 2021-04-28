@@ -1,0 +1,73 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.google.dagger:dagger
+    versions:
+    - 2.31.2
+    - "2.32"
+    - "2.33"
+    - "2.34"
+    - 2.34.1
+    - "2.35"
+  - dependency-name: com.google.dagger:dagger-compiler
+    versions:
+    - 2.31.2
+    - "2.32"
+    - "2.33"
+    - "2.34"
+    - 2.34.1
+    - "2.35"
+  - dependency-name: com.vaadin:vaadin-bom
+    versions:
+    - 18.0.5
+    - 18.0.6
+    - 19.0.0
+    - 19.0.1
+    - 19.0.2
+    - 19.0.3
+    - 19.0.4
+    - 19.0.5
+  - dependency-name: com.vaadin:flow-server-production-mode
+    versions:
+    - 5.0.2
+    - 5.0.3
+    - 6.0.0
+    - 6.0.1
+    - 6.0.2
+    - 6.0.3
+    - 6.0.4
+    - 6.0.5
+    - 6.0.6
+  - dependency-name: org.eclipse.jetty.websocket:javax-websocket-server-impl
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty.websocket:websocket-server
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-server
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: org.eclipse.jetty:jetty-continuation
+    versions:
+    - 9.4.36.v20210114
+    - 9.4.37.v20210219
+    - 9.4.38.v20210224
+    - 9.4.39.v20210325
+  - dependency-name: com.github.ben-manes.versions
+    versions:
+    - 0.36.0
